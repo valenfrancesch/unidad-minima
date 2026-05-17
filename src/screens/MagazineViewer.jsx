@@ -37,9 +37,10 @@ const TikTokIcon = () => (
 );
 
 const MagazineViewer = ({ bgColor = 'blue' }) => {
+  const initialPage = parseInt(localStorage.getItem('magazineCurrentPage') || '0', 10);
   const [numPages, setNumPages] = useState(null);
-  const [page, setPage] = useState(0);
-  const [pageInput, setPageInput] = useState(1);
+  const [page, setPage] = useState(initialPage);
+  const [pageInput, setPageInput] = useState(initialPage + 1);
   const [errorMsg, setErrorMsg] = useState("");
   const [isFading, setIsFading] = useState(false);
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
@@ -61,10 +62,24 @@ const MagazineViewer = ({ bgColor = 'blue' }) => {
     setNumPages(numPages);
   }
 
+  useEffect(() => {
+    if (numPages && book.current) {
+      const savedPage = parseInt(localStorage.getItem('magazineCurrentPage') || '0', 10);
+      if (savedPage > 0 && savedPage < numPages) {
+        setTimeout(() => {
+          if (book.current && book.current.pageFlip()) {
+            book.current.pageFlip().turnToPage(savedPage);
+          }
+        }, 100);
+      }
+    }
+  }, [numPages]);
+
   const onPage = (e) => {
     setPage(e.data);
     setPageInput(e.data + 1);
     setIsFading(false); // Reset fading state after flip
+    localStorage.setItem('magazineCurrentPage', e.data.toString());
   };
 
   const handlePageSubmit = (e) => {
@@ -143,7 +158,7 @@ const MagazineViewer = ({ bgColor = 'blue' }) => {
                 className="magazine-overlay-left" 
                 style={{ opacity: isFading ? 0 : 1, transition: 'opacity 0.5s ease' }}
               >
-                <h1>Revista de Arquitectura, Ciudad, Cultura y Pop</h1>
+                <h1>Revista de Arquitectura, Ciudad y Cultura pop</h1>
                 <p className="description">Desliza para leer, explora la primera edición</p>
                 <p className="footer-text">No te olvides seguirme en las redes</p>
                 <div className="social-icons-row">

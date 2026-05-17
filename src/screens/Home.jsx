@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const InstagramIcon = () => (
@@ -48,6 +48,22 @@ const Home = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const infoRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (infoRef.current && !infoRef.current.contains(event.target)) {
+        setShowInfo(false);
+      }
+    };
+    if (showInfo) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showInfo]);
 
   // Handle initial state and state updates
   useEffect(() => {
@@ -155,7 +171,7 @@ const Home = () => {
         {user ? (
           <button className="auth-btn">{user}</button>
         ) : (
-          <button className="auth-btn" onClick={() => setShowAuthModal(true)}>Ingresar</button>
+          <button className="auth-btn" onClick={() => setShowAuthModal(true)}>Suscribirse</button>
         )}
       </div>
 
@@ -167,16 +183,19 @@ const Home = () => {
 
       {/* Bottom right info */}
       {!user && (
-        <div className="bottom-right-info">
+        <div className="bottom-right-info" ref={infoRef}>
           <button className="info-btn" onClick={() => setShowInfo(!showInfo)}>?</button>
           <div className={`info-popover ${showInfo ? 'visible' : ''}`}>
-            <h3>Suscripción</h3>
-            <p>Accede a contenido exclusivo suscribiéndote a nuestra revista. ¡Disfruta de nuevas ediciones cada mes, entrevistas inéditas y más!</p>
+            <h3>¡Hola!</h3>
+            <p>Unidad mínima es una revista independiente de arquitectura y urbanismo.<br />
+              Cada mes se publican textos sobre ciudades, arquitectura, internet y cultura pop.<br />
+              Suscribite para recibir nuevas ediciones por mail.</p>
           </div>
         </div>
       )}
 
       {/* Auth Modal */}
+      {/*
       {showAuthModal && (
         <div className="auth-modal-overlay">
           <div className="auth-modal">
@@ -222,6 +241,36 @@ const Home = () => {
                 >
                   {authMode === 'login' ? '¿No tenés cuenta? Registrarse' : '¿Ya tenés cuenta? Ingresar'}
                 </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      */}
+
+      {/* Newsletter Subscribe Modal */}
+      {showAuthModal && (
+        <div className="auth-modal-overlay">
+          <div className="auth-modal">
+            <button className="modal-close-btn" onClick={() => setShowAuthModal(false)}>
+              <CloseIcon />
+            </button>
+            <div className="auth-header">
+              <h2>¡Hola! Suscribite al newsletter</h2>
+              <p className="auth-subtitle" style={{ marginTop: '1rem' }}>Recibí las últimas novedades y contenido exclusivo en tu inbox.</p>
+            </div>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              setUser(authForm.email.split('@')[0]);
+              setShowAuthModal(false);
+            }}>
+              <div className="form-group">
+                <label>Correo electrónico</label>
+                <input type="email" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} required />
+              </div>
+              <div className="modal-actions">
+                <button type="submit" className="btn-primary">Suscribirme</button>
               </div>
             </form>
           </div>
