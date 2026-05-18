@@ -29,6 +29,9 @@ const Home = () => {
   const [showInfo, setShowInfo] = useState(false);
   const [authForm, setAuthForm] = useState({ name: '', email: '', confirmEmail: '', password: '' });
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subscribeMessage, setSubscribeMessage] = useState({ text: '', type: '' });
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleAuthSubmit = (e) => {
     e.preventDefault();
@@ -40,6 +43,41 @@ const Home = () => {
       // API call goes here
       setUser(authForm.name);
       setShowAuthModal(false);
+    }
+  };
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubscribeMessage({ text: '', type: '' });
+
+    try {
+      const email = authForm.email.trim();
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://admin.unidadminima.com.ar/api';
+      const response = await fetch(`${apiUrl}/subscribers/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setUser(email.split('@')[0]);
+        setShowAuthModal(false);
+        setAuthForm({ ...authForm, email: '' });
+        setShowSuccessModal(true);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setSubscribeMessage({ 
+          text: errorData.message || 'Hubo un error al procesar tu suscripción.', 
+          type: 'error' 
+        });
+      }
+    } catch (error) {
+      setSubscribeMessage({ text: 'Error de conexión. Inténtalo más tarde.', type: 'error' });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -260,19 +298,43 @@ const Home = () => {
               <p className="auth-subtitle" style={{ marginTop: '1rem' }}>Recibí las últimas novedades y contenido exclusivo en tu inbox.</p>
             </div>
 
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              setUser(authForm.email.split('@')[0]);
-              setShowAuthModal(false);
-            }}>
+            <form onSubmit={handleSubscribe}>
               <div className="form-group">
                 <label>Correo electrónico</label>
-                <input type="email" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} required />
+                <input type="email" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} required disabled={isSubmitting} />
               </div>
+              
+              {subscribeMessage.text && (
+                <div className={`subscribe-message ${subscribeMessage.type}`} style={{ marginBottom: '1rem', fontSize: '0.9rem', color: subscribeMessage.type === 'success' ? '#4CAF50' : '#f44336' }}>
+                  {subscribeMessage.text}
+                </div>
+              )}
+
               <div className="modal-actions">
-                <button type="submit" className="btn-primary">Suscribirme</button>
+                <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                  {isSubmitting ? 'Suscribiendo...' : 'Suscribirme'}
+                </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="auth-modal-overlay">
+          <div className="auth-modal text-center">
+            <button className="modal-close-btn" onClick={() => setShowSuccessModal(false)}>
+              <CloseIcon />
+            </button>
+            <div className="auth-header" style={{ marginBottom: '1rem' }}>
+              <h2>¡Listo! Ya sos parte de nuestra comunidad.</h2>
+              <p className="auth-subtitle" style={{ marginTop: '1rem' }}></p>
+              <p className="auth-subtitle" style={{ marginTop: '1rem' }}>Muy pronto vas a recibir en tu correo novedades, ideas e inspiración.</p>
+            </div>
+            <div className="modal-actions">
+              <button className="btn-primary" onClick={() => setShowSuccessModal(false)}>Seguir explorando</button>
+            </div>
           </div>
         </div>
       )}
