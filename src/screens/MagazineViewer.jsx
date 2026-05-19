@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import HTMLFlipBook from 'react-pageflip';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 
@@ -36,6 +37,22 @@ const TikTokIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
 );
 
+const ASPECT_RATIO = 460 / 650;
+const calculateDimensions = () => {
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+  
+  let height = vh * 0.89;
+  let width = height * ASPECT_RATIO;
+  
+  if (width * 2 > vw * 0.96) {
+    width = (vw * 0.96) / 2;
+    height = width / ASPECT_RATIO;
+  }
+  
+  return { width, height };
+};
+
 const MagazineViewer = ({ bgColor = 'blue' }) => {
   const initialPage = parseInt(localStorage.getItem('magazineCurrentPage') || '0', 10);
   const [numPages, setNumPages] = useState(null);
@@ -46,6 +63,7 @@ const MagazineViewer = ({ bgColor = 'blue' }) => {
   const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
   const [isMobilePortrait, setIsMobilePortrait] = useState(window.innerWidth < 600 && window.innerHeight > window.innerWidth);
   const [useSmallSize, setUseSmallSize] = useState(window.innerWidth < 950);
+  const [dimensions, setDimensions] = useState(calculateDimensions());
   const book = useRef();
 
   useEffect(() => {
@@ -53,6 +71,7 @@ const MagazineViewer = ({ bgColor = 'blue' }) => {
       setIsPortrait(window.innerHeight > window.innerWidth);
       setIsMobilePortrait(window.innerWidth < 600 && window.innerHeight > window.innerWidth);
       setUseSmallSize(window.innerWidth < 950);
+      setDimensions(calculateDimensions());
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -135,7 +154,7 @@ const MagazineViewer = ({ bgColor = 'blue' }) => {
           <div className="rotate-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8"></path><path d="M20 12c0 4.4-3.6 8-8 8s-8-3.6-8-8"></path><path d="m15 15 3 3 3-3"></path><path d="m9 9-3-3-3 3"></path></svg>
           </div>
-          <p>Por favor, gira tu dispositivo para leer la revista</p>
+          <p>Activá la rotación automática y girá tu dispositivo para disfrutar la revista</p>
         </div>
       )}
       
@@ -194,28 +213,70 @@ const MagazineViewer = ({ bgColor = 'blue' }) => {
             )}
 
             <div className={`magazine-content ${page === numPages - 1 ? 'last-page-active' : ''} ${page === 0 ? 'first-page-active' : ''}`}>
-              <HTMLFlipBook 
-                width={useSmallSize ? 250 : 460} 
-                height={useSmallSize ? 350 : 650} 
-                showCover={true}
-                usePortrait={false}
-                maxShadowOpacity={0.5}
-                className="flipbook"
-                ref={book}
-                onFlip={onPage}
+              <button 
+                className="side-nav-button left" 
+                onClick={prevButtonClick} 
+                disabled={page === 0}
+                title="Página anterior"
+                style={{ left: `calc(max(10px, 50% - ${dimensions.width}px - 70px))` }}
               >
-                {Array.from(new Array(numPages), (el, index) => (
-                  <PageWrapper key={`page_${index + 1}`} pageNumber={index + 1} width={useSmallSize ? 250 : 460} />
-                ))}
-              </HTMLFlipBook>
+                <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+
+              <button 
+                className="side-nav-button right" 
+                onClick={nextButtonClick} 
+                disabled={page >= numPages - 1}
+                title="Página siguiente"
+                style={{ right: `calc(max(10px, 50% - ${dimensions.width}px - 70px))` }}
+              >
+                <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+
+              <TransformWrapper
+                initialScale={1}
+                minScale={1}
+                maxScale={4}
+                centerOnInit={true}
+                wheel={{ step: 0.1 }}
+                doubleClick={{ step: 0.5 }}
+                pinch={{ step: 5 }}
+              >
+                {({ zoomIn, zoomOut, resetTransform, state }) => (
+                  <React.Fragment>
+                    <div className={`zoom-controls-overlay ${state.scale > 1 ? 'zoomed' : ''}`}>
+                      <button onClick={() => zoomIn()} title="Acercar">🔍+</button>
+                      <button onClick={() => zoomOut()} title="Alejar">🔍-</button>
+                      <button onClick={() => resetTransform()} title="Restablecer">⟲</button>
+                    </div>
+                    <TransformComponent
+                      wrapperStyle={{ width: '100%', height: '100%' }}
+                      contentStyle={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                    >
+                      <HTMLFlipBook 
+                        width={dimensions.width} 
+                        height={dimensions.height} 
+                        showCover={true}
+                        usePortrait={false}
+                        maxShadowOpacity={0.5}
+                        useMouseEvents={false}
+                        className="flipbook"
+                        ref={book}
+                        onFlip={onPage}
+                      >
+                        {Array.from(new Array(numPages), (el, index) => (
+                          <PageWrapper key={`page_${index + 1}`} pageNumber={index + 1} width={dimensions.width} />
+                        ))}
+                      </HTMLFlipBook>
+                    </TransformComponent>
+                  </React.Fragment>
+                )}
+              </TransformWrapper>
 
               <div className="controls-wrapper">
                 {errorMsg && <div className="error-toast">{errorMsg}</div>}
                 {!useSmallSize && (
                   <div className="controls">
-                    <button onClick={prevButtonClick} className="control-btn" disabled={page === 0}>
-                      ← Anterior
-                    </button>
                     <form onSubmit={handlePageSubmit} className="page-form" noValidate>
                       <span>Página</span>
                       <input 
@@ -226,9 +287,6 @@ const MagazineViewer = ({ bgColor = 'blue' }) => {
                       />
                       <span>de {numPages}</span>
                     </form>
-                    <button onClick={nextButtonClick} className="control-btn" disabled={page >= numPages - 1}>
-                      Siguiente →
-                    </button>
                   </div>
                 )}
               </div>
