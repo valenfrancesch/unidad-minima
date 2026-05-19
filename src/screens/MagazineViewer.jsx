@@ -213,25 +213,27 @@ const MagazineViewer = ({ bgColor = 'blue' }) => {
             )}
 
             <div className={`magazine-content ${page === numPages - 1 ? 'last-page-active' : ''} ${page === 0 ? 'first-page-active' : ''}`}>
-              <button 
-                className="side-nav-button left" 
-                onClick={prevButtonClick} 
-                disabled={page === 0}
-                title="Página anterior"
-                style={{ left: `calc(max(10px, 50% - ${dimensions.width}px - 70px))` }}
-              >
-                <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-              </button>
+              {page > 0 && (
+                <button 
+                  className="side-nav-button left" 
+                  onClick={prevButtonClick} 
+                  title="Página anterior"
+                  style={{ left: `calc(max(10px, 50% - ${dimensions.width}px - 70px))` }}
+                >
+                  <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+              )}
 
-              <button 
-                className="side-nav-button right" 
-                onClick={nextButtonClick} 
-                disabled={page >= numPages - 1}
-                title="Página siguiente"
-                style={{ right: `calc(max(10px, 50% - ${dimensions.width}px - 70px))` }}
-              >
-                <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </button>
+              {page < numPages - 1 && (
+                <button 
+                  className="side-nav-button right" 
+                  onClick={nextButtonClick} 
+                  title="Página siguiente"
+                  style={{ right: `calc(max(10px, 50% - ${dimensions.width}px - 70px))` }}
+                >
+                  <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              )}
 
               <TransformWrapper
                 initialScale={1}
