@@ -59,6 +59,21 @@ body, html {
   user-select: none;
 }
 
+.home-header-subtitle {
+  position: absolute;
+  top: 85px;
+  left: 40px;
+  color: rgba(255, 255, 255, 0.62);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 320px;
+  font-weight: 400;
+  z-index: 100;
+  margin: 0;
+  user-select: none;
+}
+
 /* Magazines Grid/Container that handles responsive sizes */
 .magazines-container {
   position: relative;
@@ -68,6 +83,16 @@ body, html {
   max-height: 560px;
   display: block;
   z-index: 10;
+}
+
+.magazines-container.single-magazine {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  max-width: none;
+  max-height: none;
 }
 
 /* Magazine Card styling */
@@ -185,15 +210,30 @@ body, html {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding-top: 130px;
+    padding-top: 195px; /* Increased to allow clearance for centered title + subtitle */
     padding-bottom: 120px;
   }
 
   .home-header-title {
     font-size: 1.8rem;
-    left: 20px;
+    left: 0;
+    right: 0;
     top: 20px;
+    text-align: center;
     position: fixed;
+    padding: 0 95px; /* Leaves space on sides for Ingresar button, wraps center text nicely */
+  }
+
+  .home-header-subtitle {
+    position: fixed;
+    top: 58px;
+    left: 10px;
+    right: 10px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    max-width: 70%; /* centered and compact */
   }
 
   .magazines-container {
@@ -204,6 +244,7 @@ body, html {
     flex-direction: column;
     padding-top: 20px;
     padding-bottom: 20px;
+    margin: auto 0; /* Center vertically on mobile */
   }
 
   .magazine-fallback-header {
@@ -219,12 +260,26 @@ body, html {
 
 @media (max-width: 480px) {
   .home-container {
-    padding-top: 100px;
+    padding-top: 175px; /* Increased to clear subtitle on smaller mobile screens */
     padding-bottom: 100px;
   }
 
   .home-header-title {
     font-size: 1.5rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 0 80px;
+  }
+
+  .home-header-subtitle {
+    top: 52px;
+    left: 10px;
+    right: 10px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0.76rem;
+    max-width: 75%; /* centered and compact */
   }
   
   .magazine-fallback-header {

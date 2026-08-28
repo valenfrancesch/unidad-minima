@@ -33,14 +33,9 @@ const MagazineCard = ({ index, mapIndex, magazine, position, isSingle, isMobile,
     ? (index % 2 === 0 ? '64vw' : '54vw')
     : position.width;
 
-  const height = isMobile
-    ? (index % 2 === 0 ? '89.6vw' : '75.6vw') // maintains 1:1.4 ratio
-    : position.height;
-
   const rgbColor = hexToRgb(magazine.color);
 
-  // Increased shadow visibility for black background:
-  // Combines deep black shadow for card overlapping + strong colored glow shadow for background pop
+  // Double shadow style: deep dark shadow for overlapping card occlusion + colored shadow for background glow
   const boxShadow = hovered
     ? `15px 22px 30px rgba(0, 0, 0, 0.95), 8px 12px 25px rgba(${rgbColor}, 0.65)`
     : `8px 12px 18px rgba(0, 0, 0, 0.95), 4px 6px 12px rgba(${rgbColor}, 0.35)`;
@@ -50,7 +45,7 @@ const MagazineCard = ({ index, mapIndex, magazine, position, isSingle, isMobile,
     ? {
         position: 'relative',
         width,
-        height,
+        aspectRatio: '1 / 1.4', // aspect ratio fixes image warping and cropping on resize
         // On mobile, the first rendered card (mapIndex 0, which is the latest magazine due to reverse) has 0 margin-top.
         // Subsequent cards have a negative margin to cascade overlap.
         margin: mapIndex === 0 ? '0 auto' : '-22vw auto 0 auto',
@@ -61,12 +56,10 @@ const MagazineCard = ({ index, mapIndex, magazine, position, isSingle, isMobile,
       }
     : isSingle
     ? {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
+        position: 'relative', /* Flexbox centering inside single-magazine container */
         width,
-        height,
-        transform: `translate(-50%, -50%) rotate(${position.rotation}deg) ${hovered ? 'scale(1.12)' : ''}`,
+        aspectRatio: '1 / 1.4', // maintains aspect ratio on any resolution
+        transform: `rotate(${position.rotation}deg) ${hovered ? 'scale(1.12)' : ''}`,
         zIndex: hovered ? 100 : position.zIndex,
         boxShadow,
         transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
@@ -76,7 +69,7 @@ const MagazineCard = ({ index, mapIndex, magazine, position, isSingle, isMobile,
         top: position.top,
         left: position.left,
         width,
-        height,
+        aspectRatio: '1 / 1.4', // prevents independent height scaling that crops the cover image
         transform: `rotate(${position.rotation}deg) ${hovered ? 'scale(1.1)' : ''}`,
         // Stack order for desktop: when there are more than 6 magazines, the last ones appear at the top
         zIndex: hovered ? 100 : position.zIndex + Math.floor(index / 6) * 10,

@@ -15,16 +15,16 @@ const CloseIcon = () => (
   <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
 );
 
-// Layout coordinates matching the 6-magazine design screenshot with larger alternate sizes:
-// Even indexes (0, 2, 4) are LARGE (width 22%, height 90%)
-// Odd indexes (1, 3, 5) are SMALLER (width 17%, height 72%)
+// Layout coordinates balanced vertically (top offsets sum with height to center around 50% marker):
+// Even indexes (0, 2, 4) are LARGE (width 22%, height 88%)
+// Odd indexes (1, 3, 5) are SMALLER (width 17%, height 70%)
 const MAGAZINE_POSITIONS = [
-  { top: '8%', left: '0%', width: '22%', height: '90%', rotation: -12, zIndex: 10 },
-  { top: '5%', left: '15%', width: '17%', height: '72%', rotation: -8, zIndex: 20 },
-  { top: '12%', left: '28%', width: '22%', height: '90%', rotation: 0, zIndex: 30 },
-  { top: '30%', left: '45%', width: '17%', height: '72%', rotation: 20, zIndex: 10 },
-  { top: '5%', left: '58%', width: '22%', height: '90%', rotation: -8, zIndex: 30 },
-  { top: '22%', left: '74%', width: '17%', height: '72%', rotation: -12, zIndex: 20 }
+  { top: '6%', left: '0%', width: '22%', height: '88%', rotation: -12, zIndex: 10 },
+  { top: '4%', left: '15%', width: '17%', height: '70%', rotation: -8, zIndex: 20 },
+  { top: '9%', left: '28%', width: '22%', height: '88%', rotation: 0, zIndex: 30 },
+  { top: '25%', left: '45%', width: '17%', height: '70%', rotation: 20, zIndex: 10 },
+  { top: '3%', left: '58%', width: '22%', height: '88%', rotation: -8, zIndex: 30 },
+  { top: '18%', left: '74%', width: '17%', height: '70%', rotation: -12, zIndex: 20 }
 ];
 
 const Home = () => {
@@ -64,13 +64,14 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Top Left Title */}
+      {/* Top Left Title & Description */}
       <h1 className="home-header-title">UNIDAD MINIMA</h1>
+      <p className="home-header-subtitle">
+       Revista independiente que nace de la curiosidad, del internet y de la ciudad. No hablamos sólo de edificios, sino de las formas en las que habitamos la ciudad. Un archivo en construcción sobre el presente.</p>
 
       {/* Magazines Display Area */}
-      <div className="magazines-container">
+      <div className={`magazines-container ${isSingle ? 'single-magazine' : ''}`}>
         {displayedMagazines.map((magazine, index) => {
-          // Use original magazine.id to determine position/rotation/sizes
           const originalIndex = magazine.id;
           const position = MAGAZINE_POSITIONS[originalIndex % MAGAZINE_POSITIONS.length];
           return (
@@ -89,13 +90,13 @@ const Home = () => {
       </div>
 
       {/* Top right auth */}
-      <div className="top-right-auth">
+      {/* <div className="top-right-auth">
         {user ? (
           <button className="auth-btn">{user}</button>
         ) : (
           <button className="auth-btn" onClick={() => setShowAuthModal(true)}>Ingresar</button>
         )}
-      </div>
+      </div> */}
 
       {/* Social Sidebar */}
       <div className="home-social-sidebar">
@@ -108,8 +109,7 @@ const Home = () => {
         <div className="bottom-right-info">
           <button className="info-btn" onClick={() => setShowInfo(!showInfo)}>?</button>
           <div className={`info-popover ${showInfo ? 'visible' : ''}`}>
-            <h3>Suscripción</h3>
-            <p>Accede a contenido exclusivo suscribiéndote a nuestra revista. ¡Disfruta de nuevas ediciones cada mes, entrevistas inéditas y más!</p>
+            <p>Muy pronto vas a poder suscribirte a nuestra revista y acceder a contenido exclusivo de arquitectura, ciudad,  cultura y pop ✨</p>
           </div>
         </div>
       )}
