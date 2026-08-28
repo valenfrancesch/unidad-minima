@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   applyResponsivePageMode,
   BOOK_ELEMENT_ID,
@@ -10,7 +10,11 @@ import {
 import { MAGAZINE_PDF } from '../config/magazine';
 import './DFlipViewer.css';
 
-const DFlipViewer = ({ bgColor = '#1a2bc3' }) => {
+const DFlipViewer = ({ bgColor: defaultBgColor = '#1a2bc3' }) => {
+  const location = useLocation();
+  const pdfUrl = location.state?.pdfUrl || MAGAZINE_PDF;
+  const bgColor = location.state?.bgColor || defaultBgColor;
+
   const [status, setStatus] = useState('loading');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -42,7 +46,7 @@ const DFlipViewer = ({ bgColor = '#1a2bc3' }) => {
       orientationQuery.addListener(onOrientationChange);
     }
 
-    initDFlipViewer(MAGAZINE_PDF)
+    initDFlipViewer(pdfUrl)
       .then(() => {
         if (!cancelled) {
           setStatus('ready');

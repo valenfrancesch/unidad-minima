@@ -38,114 +38,100 @@ body, html {
   position: relative;
   width: 100vw;
   height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  overflow: hidden;
 }
 
-.image-wrapper {
+.home-header-title {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: max(100vw, 100vh * (16 / 9));
-  height: max(100vh, 100vw * (9 / 16));
-}
-
-.background-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.image-back {
-  z-index: 1;
-}
-
-.image-front {
-  z-index: 2;
-  opacity: 0;
-  transition: opacity 0.15s ease-in-out;
-}
-
-.image-front.visible {
-  opacity: 1;
-}
-
-.star-icon {
-  position: absolute;
-  z-index: 5;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease-in-out;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.star-icon.visible {
-  opacity: 1;
-}
-
-.home-title {
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  max-width: 800px;
-  z-index: 5;
-  pointer-events: none;
-}
-
-.home-title-text {
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 30px;
+  left: 40px;
   font-family: 'Airone', 'Inter', sans-serif;
   color: #1a2bc3;
-  font-size: 7vw;
-  text-align: center;
-  z-index: 5;
-  pointer-events: none;
-  white-space: normal;
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  z-index: 100;
   margin: 0;
-  margin-top: -3vh;
-  width: 90%;
-  line-height: 1.1;
-  animation: titleFadeIn 0.5s ease-out forwards;
-  opacity: 0;
+  user-select: none;
 }
 
-@keyframes titleFadeIn {
-  from { opacity: 0; transform: translate(-50%, -5px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
-}
-
-@media (max-width: 768px) {
-  .home-title {
-    top: 15%;
-    width: 80%;
-  }
-  .home-title-text {
-    top: 15%;
-    font-size: 15vw;
-  }
-}
-
-.clickable-area {
-  position: absolute;
+/* Magazines Grid/Container that handles responsive sizes */
+.magazines-container {
+  position: relative;
+  width: 90vw;
+  max-width: 1300px;
+  height: 65vh;
+  max-height: 560px;
+  display: block;
   z-index: 10;
-  cursor: pointer;
-  background-color: transparent;
-  transition: transform 0.2s ease;
 }
 
-.clickable-area:hover {
-  transform: scale(1.05);
+/* Magazine Card styling */
+.magazine-card {
+  border-radius: 3px; /* Sharp corners mimicking printed magazines in the image */
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.22); /* brighter border for black background */
+  cursor: pointer;
+  background-color: #111;
+  /* Box-shadow is managed dynamically in React to provide customized color bleeds */
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              border-color 0.4s ease,
+              z-index 0.1s ease;
+}
+
+.magazine-card.hovered {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.magazine-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  display: block;
+}
+
+/* Fallback cover styling */
+.magazine-cover-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 16px;
+  color: #000; /* Numbers and texts in black */
+  font-family: 'Inter', sans-serif;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.15);
+  user-select: none;
+}
+
+.magazine-fallback-header {
+  font-size: 0.8vw;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.magazine-fallback-number {
+  font-size: 5.5vw;
+  font-weight: 900;
+  line-height: 1;
+  font-family: 'Airone', 'Inter', sans-serif;
+}
+
+.magazine-fallback-footer {
+  font-size: 0.8vw;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-align: center;
+  opacity: 0.8;
 }
 
 .back-button {
@@ -172,76 +158,83 @@ body, html {
   transform: translateY(-2px);
 }
 
-.video-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100dvh;
-  z-index: 1000;
-  background-color: #000;
-  transition: opacity 0.15s ease-in-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Media Queries for sizing */
+@media (max-width: 1024px) {
+  .home-header-title {
+    font-size: 2.2rem;
+    left: 24px;
+    top: 24px;
+  }
+  .magazine-fallback-header {
+    font-size: 1.1vw;
+  }
+  .magazine-fallback-number {
+    font-size: 7.5vw;
+  }
+  .magazine-fallback-footer {
+    font-size: 1.1vw;
+  }
 }
 
-.intro-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.social-icons-row {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.icon-button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-}
-
-.icon-button:hover {
-  background: white;
-  color: #1a2bc3;
-  transform: scale(1.1);
-}
-
-.icon-button svg {
-  width: 24px;
-  height: 24px;
-}
-
-/* Mobile aspect ratio fix (9:16) */
 @media (max-width: 768px) {
-  .image-wrapper {
-    width: max(100vw, 100vh * (9 / 16)) !important;
-    height: max(100vh, 100vw * (16 / 9)) !important;
+  .home-container {
+    height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 130px;
+    padding-bottom: 120px;
+  }
+
+  .home-header-title {
+    font-size: 1.8rem;
+    left: 20px;
+    top: 20px;
+    position: fixed;
+  }
+
+  .magazines-container {
+    width: 100vw;
+    height: auto;
+    max-height: none;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .magazine-fallback-header {
+    font-size: 2.5vw;
+  }
+  .magazine-fallback-number {
+    font-size: 16vw;
+  }
+  .magazine-fallback-footer {
+    font-size: 2.5vw;
   }
 }
 
-/* Smaller social icons on mobile */
-@media (max-width: 950px) {
-  .icon-button {
-    width: 32px !important;
-    height: 32px !important;
+@media (max-width: 480px) {
+  .home-container {
+    padding-top: 100px;
+    padding-bottom: 100px;
   }
 
-  .icon-button svg {
-    width: 16px !important;
-    height: 16px !important;
+  .home-header-title {
+    font-size: 1.5rem;
+  }
+  
+  .magazine-fallback-header {
+    font-size: 3vw;
+  }
+  .magazine-fallback-number {
+    font-size: 20vw;
+  }
+  .magazine-fallback-footer {
+    font-size: 3vw;
   }
 }
 
@@ -255,6 +248,7 @@ body, html {
 
 @media (max-width: 768px) {
   .top-right-auth {
+    position: fixed;
     top: 15px;
     right: 15px;
   }
@@ -428,7 +422,7 @@ body, html {
 }
 
 .home-social-sidebar {
-  position: absolute;
+  position: fixed;
   right: 30px;
   top: 50%;
   transform: translateY(-50%);
@@ -439,20 +433,42 @@ body, html {
 }
 
 .home-social-sidebar .icon-button {
-  border-color: #1a2bc3;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #1a2bc3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #1a2bc3;
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
 
 .home-social-sidebar .icon-button:hover {
   background-color: #1a2bc3;
-  color: white;
+  color: #000;
+  transform: scale(1.1);
+}
+
+.home-social-sidebar .icon-button svg {
+  width: 22px;
+  height: 22px;
 }
 
 @media (max-width: 768px) {
   .home-social-sidebar {
     right: 15px;
+  }
+  .home-social-sidebar .icon-button {
+    width: 36px;
+    height: 36px;
+  }
+  .home-social-sidebar .icon-button svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -465,6 +481,7 @@ body, html {
 
 @media (max-width: 768px) {
   .bottom-right-info {
+    position: fixed;
     bottom: 15px;
     right: 15px;
   }

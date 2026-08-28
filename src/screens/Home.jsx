@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { MAGAZINES } from '../config/magazinesData';
+import MagazineCard from '../components/MagazineCard';
 
 const InstagramIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
@@ -13,16 +15,20 @@ const CloseIcon = () => (
   <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
 );
 
+// Layout coordinates matching the 6-magazine design screenshot with larger alternate sizes:
+// Even indexes (0, 2, 4) are LARGE (width 22%, height 90%)
+// Odd indexes (1, 3, 5) are SMALLER (width 17%, height 72%)
+const MAGAZINE_POSITIONS = [
+  { top: '8%', left: '0%', width: '22%', height: '90%', rotation: -12, zIndex: 10 },
+  { top: '5%', left: '15%', width: '17%', height: '72%', rotation: -8, zIndex: 20 },
+  { top: '12%', left: '28%', width: '22%', height: '90%', rotation: 0, zIndex: 30 },
+  { top: '30%', left: '45%', width: '17%', height: '72%', rotation: 20, zIndex: 10 },
+  { top: '5%', left: '58%', width: '22%', height: '90%', rotation: -8, zIndex: 30 },
+  { top: '22%', left: '74%', width: '17%', height: '72%', rotation: -12, zIndex: 20 }
+];
+
 const Home = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [showVideo, setShowVideo] = useState(() => {
-    if (location.state?.skipVideo) return false;
-    if (sessionStorage.getItem('videoPlayed') === 'true') return false;
-    return true;
-  });
-  const [videoOpacity, setVideoOpacity] = useState(1);
-  const [animationStep, setAnimationStep] = useState(0); // 0: Negro, 1: Star
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [user, setUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -33,11 +39,9 @@ const Home = () => {
   const handleAuthSubmit = (e) => {
     e.preventDefault();
     if (authMode === 'login' && authForm.email && authForm.password) {
-      // API call goes here
       setUser(authForm.email.split('@')[0]);
       setShowAuthModal(false);
     } else if (authMode === 'signup' && authForm.name && authForm.email) {
-      // API call goes here
       setUser(authForm.name);
       setShowAuthModal(false);
     }
@@ -49,105 +53,39 @@ const Home = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Handle initial state and state updates
-  useEffect(() => {
-    if (location.state?.skipVideo) {
-      setShowVideo(false);
-    } else if (sessionStorage.getItem('videoPlayed') === 'true') {
-      setShowVideo(false);
-    } else {
-      setShowVideo(true);
-      sessionStorage.setItem('videoPlayed', 'true');
-    }
-  }, [location.state]);
-
-  useEffect(() => {
-    // Start the sequence when video is gone
-    if (!showVideo) {
-      const timers = [];
-      
-      // Fade in the star after 1s
-      timers.push(setTimeout(() => setAnimationStep(1), 1000));
-
-      return () => timers.forEach(clearTimeout);
-    }
-  }, [showVideo]);
-
-  const handleVideoEnd = () => {
-    setVideoOpacity(0);
-    setTimeout(() => {
-      setShowVideo(false);
-    }, 1000); // Wait for fade out animation
+  const handleMagazineClick = (mag) => {
+    navigate('/magazine', { state: { pdfUrl: mag.pdfUrl, bgColor: mag.color, title: mag.title } });
   };
 
-  // Array of clickable areas
-  const clickableAreas = [
-    {
-      id: 1,
-      top: isMobile ? '28%' : '18%',
-      left: isMobile ? '32%' : '38%',
-      width: isMobile ? '12%' : '8%',
-      height: '15%',
-      redirectUrl: '/magazine',
-      label: 'Blue Section',
-      icon: '/blue_star_1.svg'
-    }
-  ];
+  const isSingle = MAGAZINES.length === 1;
 
-  const handleAreaClick = (url) => {
-    navigate(url);
-  };
+  // On mobile, reverse the magazines array so that the last edition appears first
+  const displayedMagazines = isMobile ? [...MAGAZINES].reverse() : MAGAZINES;
 
   return (
     <div className="home-container">
-      {showVideo && (
-        <div className="video-overlay" style={{ opacity: videoOpacity }}>
-          <video 
-            className="intro-video" 
-            autoPlay 
-            muted 
-            onEnded={handleVideoEnd}
-            playsInline
-          >
-            <source src={isMobile ? "/mobile/unidad_minima_mobile.mp4" : "/UNIDAD_MINIMA_1.mp4"} type="video/mp4" />
-          </video>
-        </div>
-      )}
-      <div className="image-wrapper">
-        {/* Background Image */}
-        <img 
-          src={isMobile ? "/mobile/edificio_negro_mobile.png" : "/edificio_negro.png"} 
-          alt="Edificio Negro" 
-          className="background-image image-back" 
-          draggable="false" 
-        />
+      {/* Top Left Title */}
+      <h1 className="home-header-title">UNIDAD MINIMA</h1>
 
-        {/* Title Image */}
-        <h1 className="home-title-text">UNIDAD {isMobile && <br />} MINIMA</h1>
-
-        {/* Render clickable areas and icons */}
-        {clickableAreas.map((area) => (
-          <div
-            key={area.id}
-            className="clickable-area"
-            style={{
-              top: area.top,
-              left: area.left,
-              width: area.width,
-              height: area.height,
-            }}
-            onClick={() => handleAreaClick(area.redirectUrl)}
-            title={area.label}
-          >
-            {area.icon && (
-              <img 
-                src={area.icon} 
-                alt="icon" 
-                className={`star-icon ${animationStep === 1 ? 'visible' : ''}`} 
-              />
-            )}
-          </div>
-        ))}
+      {/* Magazines Display Area */}
+      <div className="magazines-container">
+        {displayedMagazines.map((magazine, index) => {
+          // Use original magazine.id to determine position/rotation/sizes
+          const originalIndex = magazine.id;
+          const position = MAGAZINE_POSITIONS[originalIndex % MAGAZINE_POSITIONS.length];
+          return (
+            <MagazineCard
+              key={magazine.id}
+              index={originalIndex}
+              mapIndex={index}
+              magazine={magazine}
+              position={position}
+              isSingle={isSingle}
+              isMobile={isMobile}
+              onClick={() => handleMagazineClick(magazine)}
+            />
+          );
+        })}
       </div>
 
       {/* Top right auth */}
