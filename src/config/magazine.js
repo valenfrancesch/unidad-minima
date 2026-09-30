@@ -1,4 +1,4 @@
-/** PDF servido desde public/ → /unidad_minima_1_comprimido.pdf */
-export const MAGAZINE_PDF = '/unidad_minima_1_comprimido.pdf';
+/** PDF por defecto, servido desde public/sources/release1.pdf */
+export const MAGAZINE_PDF = '/sources/release1.pdf';
 
-export const MAGAZINE_PDF_PUBLIC_PATH = `public/unidad_minima_1_comprimido.pdf`;
+export const MAGAZINE_PDF_PUBLIC_PATH = 'public/sources/release1.pdf';
