@@ -12,7 +12,7 @@ const hexToRgb = (hex) => {
   }
 };
 
-const MagazineCard = ({ index, mapIndex, magazine, position, isSingle, isMobile, onClick }) => {
+const MagazineCard = ({ index, mapIndex, magazine, position, isSingle, isPair, isMobile, onClick }) => {
   const [hovered, setHovered] = useState(false);
   const [currentCoverIndex, setCurrentCoverIndex] = useState(0);
   const [imgFailed, setImgFailed] = useState(false);
@@ -54,13 +54,14 @@ const MagazineCard = ({ index, mapIndex, magazine, position, isSingle, isMobile,
         boxShadow,
         transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
       }
-    : isSingle
+    : isSingle || isPair
     ? {
-        position: 'relative', /* Flexbox centering inside single-magazine container */
-        width,
-        aspectRatio: '1 / 1.4', // maintains aspect ratio on any resolution
-        transform: `rotate(${position.rotation}deg) ${hovered ? 'scale(1.12)' : ''}`,
-        zIndex: hovered ? 100 : position.zIndex,
+        position: 'relative',
+        width: isPair ? '18vw' : width,
+        maxWidth: isPair ? '300px' : undefined,
+        aspectRatio: '1 / 1.4',
+        transform: `rotate(${isPair ? (mapIndex === 0 ? -8 : 8) : position.rotation}deg) ${hovered ? 'scale(1.12)' : ''}`,
+        zIndex: hovered ? 100 : (isPair ? mapIndex + 1 : position.zIndex),
         boxShadow,
         transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
       }

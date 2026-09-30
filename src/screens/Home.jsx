@@ -58,6 +58,7 @@ const Home = () => {
   };
 
   const isSingle = MAGAZINES.length === 1;
+  const isPair = MAGAZINES.length === 2;
 
   // On mobile, reverse the magazines array so that the last edition appears first
   const displayedMagazines = isMobile ? [...MAGAZINES].reverse() : MAGAZINES;
@@ -70,7 +71,7 @@ const Home = () => {
        Revista independiente que nace de la curiosidad, del internet y de la ciudad. No hablamos sólo de edificios, sino de las formas en las que habitamos la ciudad. Un archivo en construcción sobre el presente.</p>
 
       {/* Magazines Display Area */}
-      <div className={`magazines-container ${isSingle ? 'single-magazine' : ''}`}>
+      <div className={`magazines-container${isSingle ? ' single-magazine' : ''}${isPair ? ' pair-magazines' : ''}`}>
         {displayedMagazines.map((magazine, index) => {
           const originalIndex = magazine.id;
           const position = MAGAZINE_POSITIONS[originalIndex % MAGAZINE_POSITIONS.length];
@@ -82,6 +83,7 @@ const Home = () => {
               magazine={magazine}
               position={position}
               isSingle={isSingle}
+              isPair={isPair}
               isMobile={isMobile}
               onClick={() => handleMagazineClick(magazine)}
             />

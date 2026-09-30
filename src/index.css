@@ -95,6 +95,19 @@ body, html {
   max-height: none;
 }
 
+@media (min-width: 769px) {
+  .magazines-container.pair-magazines {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    gap: 3vw;
+  }
+}
+
 /* Magazine Card styling */
 .magazine-card {
   border-radius: 3px; /* Sharp corners mimicking printed magazines in the image */

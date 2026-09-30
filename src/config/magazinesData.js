@@ -4,21 +4,20 @@ export const MAGAZINES = [
     title: 'Edición 01',
     color: '#1a2bc3', // Blue
     portada: [
-      '/portada_1.jpg'
+      '/sources/tapa1-1.png'
     ],
-    pdfUrl: '/unidad_minima_1_comprimido.pdf'
+    pdfUrl: '/sources/release1.pdf'
   },
-  /* {
+  {
     id: 1,
     title: 'Edición 02',
     color: '#5cd65c', // Green
     portada: [
-      '/covers/mag2_1.jpg',
-      '/covers/mag2_2.jpg'
+      '/sources/tapa2-1.png'
     ],
-    pdfUrl: '/unidad_minima_1_comprimido.pdf'
+    pdfUrl: '/sources/release2.pdf'
   },
-  {
+  /* {
     id: 2,
     title: 'Edición 03',
     color: '#ffdd55', // Yellow
