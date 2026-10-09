@@ -68,7 +68,7 @@ const Home = () => {
       {/* Top Left Title & Description */}
       <h1 className="home-header-title">UNIDAD MINIMA</h1>
       <p className="home-header-subtitle">
-       Revista independiente que nace de la curiosidad, del internet y de la ciudad. No hablamos sólo de edificios, sino de las formas en las que habitamos la ciudad. Un archivo en construcción sobre el presente.</p>
+       Revista independiente que nace de la curiosidad, de internet y de la ciudad. No hablamos sólo de edificios, sino de las formas en las que habitamos la ciudad. Un archivo en construcción sobre el presente.</p>
 
       {/* Magazines Display Area */}
       <div className={`magazines-container${isSingle ? ' single-magazine' : ''}${isPair ? ' pair-magazines' : ''}`}>
